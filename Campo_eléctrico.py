@@ -5,6 +5,7 @@ import numpy as np
 from numpy import *
 import webbrowser as wb
 import openpyxl as op
+import io
 
 tab1, tab2, tab3 = st.tabs(['Tabla Teórica', 'Actividad 1', 'Actividad 2'])
 with tab1:
@@ -61,36 +62,42 @@ with tab2:
     # Actividad 1
     ## Tomando como punto de partida el *ejemplo* del dibujo:
     1. Intentá reproducirlo con el simulador PhET
+    """
+    url = 'https://phet.colorado.edu/sims/html/charges-and-fields/latest/charges-and-fields_es.html'
+
+    if st.button('Usar PhET de Campo Eléctrico'):
+        wb.open_new_tab(url)
+
+    """
     2. Seleccioná una carga positiva de 1nC.
     3. Seleccioná una segunda carga negativa de 1nC.
     4. Seleccioná el ítem Campo Eléctrico.
     5. Medí la distancia entre ambas cargas con la cinta métrica.
     6. Medí la intensidad del Campo con el Voltímetro.
     7. Utilizando la Grilla Cuadriculada, medí el módulo de los vectores.
-    8. Calculá el Campo Eléctrico usando la Ecuación a continuación.
-
+    8. Calculá el Campo Eléctrico usando la Ecuación a continuación. 
     """
     st.image('./Figuras/ejemplo2.png')
 
+    """
+    $ E = \cfrac{k*q}{r^2} $
+    * $ E $ : Campo eléctrico 
+    * $ q $ : Carga (en $ \C (coulombios) $)
+    * $ r $ : Distancia desde la carga eléctrica al punto (en $ \m (metros) $)
+    * $ k $ : Constante eléctrostática del medio (su valor es $ \ 9*10^{9} N*m^2*C^{-2} $)
+    """
     
-    url = 'https://phet.colorado.edu/sims/html/charges-and-fields/latest/charges-and-fields_es.html'
-
-    if st.button('Usar PhET de Campo Eléctrico'):
-        wb.open_new_tab(url)
 with tab3:
     """
     # Actividad 2
-    ## ¡Hazlo tú mismo!:
+    ## ¡Hacelo vos mismo!:
     ### Ahora que aprendiste como varían el valor de la carga y la distancia con respecto al campo eléctrico, te invitamos a que lo pruebes.
-    1. Ingresa al valor de carga con con el botón *CARGA*.
-    2. Observa como varía el campo Eléctrico en el gráfico punteado ROJO.
-    3. Ingresa al valor de distancia con con el botón *DISTANCIA*.
-    4. Observa como varía el campo Eléctrico en el gráfico punteado AZUL.
-    5. Usando la tabla de excel realiza los cálculos.
-
+    1. Ingresá al valor de carga con con el botón *CARGA*.
+    2. Observá como varía el campo Eléctrico en el gráfico punteado ROJO.
+    3. Ingresá al valor de distancia con con el botón *DISTANCIA*.
+    4. Observá como varía el campo Eléctrico en el gráfico punteado AZUL.
     """
-    
-       
+           
     col1, col2 = st.columns(2)
 
     with col1:
@@ -114,8 +121,31 @@ with tab3:
     g = plt.figure()
     plt.plot(distancia_1 , campo_eléctrico2 , lw=2, ls='-.', c='b')
     g
+
+    """ 
+    5. Descargá la *TABLA DE EXCEL* desde el botón a continuación.
+    """
+    Q = np.array([3e-4, 5e-5, 3e-6])  # Carga puntual (Coulomb)
+    r_1 = np.array([0.1, 0.02, 0.001])  # Distancias de separación entre cargas (metros)
+    k = 9e9  # Constante de la Ley de Coulomb
+    E = [f'=B{fila}*9e9/C{fila}^2' for fila in range(2, 2 + len(Q))]  
     
-        
+    datos_tabla = {'Carga 1 [C]': Q, 'Separación [m]': r_1, 'Campo Eléctrico [N/C]': E}
+    tabla = pd.DataFrame(data=datos_tabla)
+
+    contenido_archivo = io.BytesIO()  # Variable en memoria RAM para almacenar el contenido del Excel
+    tabla.to_excel(contenido_archivo)  # Vuelco la tabla a la variable anterior
+
+    # Botón de descarga para lo almacenado en la variable 'contenido_archivo':
+    st.download_button('⬇ Descargar tabla', data=contenido_archivo, file_name='Electrostática.xlsx')
+
+    """
+    6. Usando el Simulador de PHeT, tomá valores y guardalos en las celdas de la tabla de excel.
+    7. Usando la tabla de excel realizá los cálculos y los gráficos. En el caso en que no sepas hacer un gráfico con excel, acá te dejo un tutorial. 
+    """   
+    url = 'https://www.youtube.com/watch?v=FCj2YworGFg'
+    if st.button('Crear gráficos de línea en Excel'):
+        wb.open_new_tab(url)
 
     
     
